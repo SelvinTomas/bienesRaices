@@ -1,8 +1,6 @@
 <?php
-session_start();
-
-$auth = $_SESSION['login'];
-
+require '../includes/funciones.php';
+$auth = estaAutenticado();
 if(!$auth){
     header('Location: /');
 }
@@ -51,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 
-require '../includes/funciones.php';
+
 // Incluye el template
 incluirTemplates('header');
 
