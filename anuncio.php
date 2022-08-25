@@ -7,8 +7,7 @@ if(!$id){
     header('Location: /');
 }
 
-// Importar la base de datos
-require  'includes/config/database.php';
+require 'includes/app.php';
 $db = conectarDB();
 
 
@@ -29,7 +28,7 @@ $propiedad = mysqli_fetch_assoc($resultado);
 
 
 
-require 'includes/funciones.php';
+
 
  incluirTemplates('header');
 

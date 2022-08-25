@@ -1,0 +1,17 @@
+{
+    "name": "selvintomas/bienesraices",
+    "description": "Mejorando proyecto con POO",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Selvin Tomás",
+            "email": "tomas.a12108@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\": "./classes"
+        }
+    }
+}
