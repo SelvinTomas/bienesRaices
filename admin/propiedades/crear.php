@@ -3,6 +3,8 @@
 require '../../includes/app.php';
 
 use App\Propiedad;
+
+
 use Intervention\Image\ImageManagerStatic as Image;
 
 estaAutenticado();
@@ -28,30 +30,22 @@ $vendedorId = '';
 // Ejecutar el codigo despues de que el usuario envíe el formulario
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // SUBIDA DE ARCHIVOS
+
+    // SUBIDA DE ARCHIVOS
+
     // Crear instancia
     $propiedad = new Propiedad($_POST);
-
-    // Crear carpeta
-    $carpetaImagenes = '../../imagenes/';
-
-    if (!is_dir($carpetaImagenes)) {
-
-        mkdir($carpetaImagenes);
-    }
 
     // Generar el nombre unico
     $nombreImagen = md5(uniqid(rand(), true)) . ".jpg";
 
     // Realiza un resize a la imagen con Intervention/image
-    if($_FILES['imagen']['tmp_name']){
+    if ($_FILES['imagen']['tmp_name']) {
         $image = Image::make($_FILES['imagen']['tmp_name'])->fit(800, 600);
         $propiedad->setImagen($nombreImagen);
-   
     }
-    
-    // Validar
-    $errores = $propiedad->validar();
+
+    $errores  = $propiedad->validar();
 
 
     // Revisar que el arreglo de errores este vacio
@@ -60,9 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         // Crear carpeta para subir imagenes
-        if(!is_dir(CARPETA_IMAGENES)){
+        if (!is_dir(CARPETA_IMAGENES)) {
             mkdir(CARPETA_IMAGENES);
-        };
+        }
 
 
 
@@ -71,6 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Guardar en la base de datos
         $resultado = $propiedad->guardar();
+
+
 
         // Mensaje de exito
         if ($resultado) {

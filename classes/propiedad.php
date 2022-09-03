@@ -53,10 +53,14 @@ class Propiedad
         $query .= " ) VALUES (' "; 
         $query .=  join("', '", array_values($atributos)); 
         $query .=  " ') ";
+        
 
         $resultado = self::$db->query($query);
         return $resultado;
     }
+
+
+
     // Identificar y unir los atributos de la BD
     public function atributos(){
         $atributos = [];
@@ -66,6 +70,7 @@ class Propiedad
         }
         return $atributos;
     }
+
     public function sanitizarAtributos(){
         $atributos = $this->atributos();
         $sanitizado = [];
@@ -117,6 +122,7 @@ class Propiedad
 
     return self::$errores;
     }
+
     public static function all(){
         $query = "SELECT * FROM propiedades";
         $resultado = self::consultarSQL($query);
@@ -139,6 +145,7 @@ class Propiedad
         // Retornar los resultados
         return $array;
     }
+
     protected static function crearObjeto($registro){
         $objeto = new self;
 
