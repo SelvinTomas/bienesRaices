@@ -3,8 +3,8 @@ require '../includes/app.php';
 estaAutenticado();
 
 use App\Propiedad;
-// Implementar metodo para obtener todas las propiedades
 
+// Implementar metodo para obtener todas las propiedades
 $propiedades = Propiedad::all();
 
 
