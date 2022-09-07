@@ -42,14 +42,14 @@ class Propiedad
         $this->vendedorId = $args['vendedorId'] ?? 1;
     }
 
-    public function guardar(){
-        if(isset($this->id)){
-            $this->actualizar();
-        }else{
-            $this->crear();
-        }
+    // public function guardar(){
+    //     if(isset($this->id)){
+    //         $this->actualizar();
+    //     }else{
+    //         $this->crear();
+    //     }
 
-    }
+    // }
 
     public function crear()
     {
@@ -78,10 +78,12 @@ class Propiedad
         $query .= join(', ', $valores);
         $query .= " WHERE id = '" .  self::$db->escape_string($this->id) . "' ";
         $query .= " LIMIT 1 ";
+        
         $resultado = self::$db->query($query);
+        
 
         if ($resultado) {
-            // echo "insertado correctamente";
+
             // Redireccionar a los usuarios
             header('Location: /admin?resultado=2');
         }
@@ -208,8 +210,6 @@ class Propiedad
 
     // Sincronizar el objeto en memoria con los cambios realizados por el usuario
     public function sincronizar($args = []){
-
-
         foreach($args as $key => $value){
             if(property_exists($this, $key) && !is_null($value)){
                 $this->$key = $value;
