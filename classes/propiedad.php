@@ -6,7 +6,7 @@ class Propiedad
 {
     // Base de datos
     protected static $db;
-    protected static $columnasDb = ['id','titulo','precio','imagen','descripcion','habitaciones','wc','estacionamiento','creado','vendedorId'];
+    protected static $columnasDb = ['id', 'titulo', 'precio', 'imagen', 'descripcion', 'habitaciones', 'wc', 'estacionamiento', 'creado', 'vendedorId'];
 
     // Errores o validacion
     protected static $errores = [];
@@ -59,134 +59,158 @@ class Propiedad
         // Insertar los datos en la DB
         $query = " INSERT INTO propiedades ( ";
         $query .= join(', ', array_keys($atributos));
-        $query .= " ) VALUES (' "; 
-        $query .=  join("', '", array_values($atributos)); 
+        $query .= " ) VALUES (' ";
+        $query .=  join("', '", array_values($atributos));
         $query .=  " ') ";
-        
+
 
         $resultado = self::$db->query($query);
         return $resultado;
     }
 
-    public function actualizar(){
+    public function actualizar()
+    {
         $atributos = $this->sanitizarAtributos();
         $valores = [];
-        foreach($atributos as $key => $value){
+        foreach ($atributos as $key => $value) {
             $valores[] = "{$key}= '{$value}'";
         }
         $query = "UPDATE propiedades SET ";
         $query .= join(', ', $valores);
         $query .= " WHERE id = '" .  self::$db->escape_string($this->id) . "' ";
         $query .= " LIMIT 1 ";
-        
+
         $resultado = self::$db->query($query);
-        
+
 
         if ($resultado) {
 
             // Redireccionar a los usuarios
             header('Location: /admin?resultado=2');
         }
+    }
 
-
+    // Eliminar un registro
+    public function eliminar()
+    {
+        // Eliminar la propiedad
+        $query = "DELETE FROM propiedades WHERE id = " . self::$db->escape_string($this->id) . " LIMIT 1";
+        $resultado = self::$db->query($query);
+        if ($resultado) {
+            $this->borrarImagen();
+            header('Location: /admin?resultado=3');
+        }
     }
 
 
 
     // Identificar y unir los atributos de la BD
-    public function atributos(){
+    public function atributos()
+    {
         $atributos = [];
-        foreach(self::$columnasDb as $columna){
-            if($columna ==='id') continue;
+        foreach (self::$columnasDb as $columna) {
+            if ($columna === 'id') continue;
             $atributos[$columna] = $this->$columna;
         }
         return $atributos;
     }
 
-    public function sanitizarAtributos(){
+    public function sanitizarAtributos()
+    {
         $atributos = $this->atributos();
         $sanitizado = [];
 
-        foreach($atributos as $key => $value){
+        foreach ($atributos as $key => $value) {
             $sanitizado[$key] = self::$db->escape_string($value);
         }
         return $sanitizado;
     }
     // Subida de archivos
-    public function setImagen($imagen){
+    public function setImagen($imagen)
+    {
         // Eliminar la imagen previa
-        if(isset($this->id)){
-            $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
-            if($existeArchivo){
-                unlink(CARPETA_IMAGENES . $this->imagen);
-            }
+        if (isset($this->id)) {
+            $this->borrarImagen();
+           
         }
         // Asignar al atributo el nombre de la imagen
-        if($imagen){
+        if ($imagen) {
             $this->imagen = $imagen;
         }
     }
 
+    // Eliminar el archivo
+    public function borrarImagen(){
+
+        $existeArchivo = file_exists(CARPETA_IMAGENES . $this->imagen);
+        if ($existeArchivo) {
+            unlink(CARPETA_IMAGENES . $this->imagen);
+        }
+    }
     // Validacion
-    public static function getErrores(){
+    public static function getErrores()
+    {
         return self::$errores;
     }
-    public function validar(){
-        
-    if (!$this->titulo) {
-        self::$errores[] = "Debes añadir un titulo";
-    }
-    if (!$this->precio) {
-        self::$errores[] = "El precio es obligatorio";
-    }
-    if (strlen($this->descripcion) < 50) {
-        self::$errores[] = "La descripcion es obligatoria y debe tener almenos 50 caracteres";
-    }
-    if (!$this->habitaciones) {
-        self::$errores[] = "El número de habitaciones es obligatorio";
-    }
-    if (!$this->wc) {
-        self::$errores[] = "El número de baños es obligatorio";
-    }
-    if (!$this->estacionamiento) {
-        self::$errores[] = "El número de estacionamiento es obligatorio";
-    }
-    if (!$this->vendedorId) {
-        self::$errores[] = "Debe de elegir un vendedor";
-    }
-    if (!$this->imagen) {
-        self::$errores[] = "La imagen es obligatoria";
-    }
+    public function validar()
+    {
+
+        if (!$this->titulo) {
+            self::$errores[] = "Debes añadir un titulo";
+        }
+        if (!$this->precio) {
+            self::$errores[] = "El precio es obligatorio";
+        }
+        if (strlen($this->descripcion) < 50) {
+            self::$errores[] = "La descripcion es obligatoria y debe tener almenos 50 caracteres";
+        }
+        if (!$this->habitaciones) {
+            self::$errores[] = "El número de habitaciones es obligatorio";
+        }
+        if (!$this->wc) {
+            self::$errores[] = "El número de baños es obligatorio";
+        }
+        if (!$this->estacionamiento) {
+            self::$errores[] = "El número de estacionamiento es obligatorio";
+        }
+        if (!$this->vendedorId) {
+            self::$errores[] = "Debe de elegir un vendedor";
+        }
+        if (!$this->imagen) {
+            self::$errores[] = "La imagen es obligatoria";
+        }
 
 
-    return self::$errores;
+        return self::$errores;
     }
 
-    public static function all(){
+    public static function all()
+    {
         $query = "SELECT * FROM propiedades";
         $resultado = self::consultarSQL($query);
- 
+
         return $resultado;
     }
 
     // Busca un registro por ID
-    public static function find($id){
+    public static function find($id)
+    {
         // Obtener los datos de la propiedad
         $query = "SELECT * FROM propiedades WHERE id = ${id}";
         $resultado = self::consultarSQL($query);
 
- 
-        return array_shift($resultado);
 
+        return array_shift($resultado);
     }
-    public static function consultarSQL($query){
+    public static function consultarSQL($query)
+    {
         // Consultar la base de datos
         $resultado = self::$db->query($query);
 
         // Iterar los resultados
         $array = [];
 
-        while($registro = $resultado->fetch_assoc()){
+        while ($registro = $resultado->fetch_assoc()) {
             $array[] = self::crearObjeto($registro);
         }
 
@@ -197,24 +221,25 @@ class Propiedad
         return $array;
     }
 
-    protected static function crearObjeto($registro){
+    protected static function crearObjeto($registro)
+    {
         $objeto = new self;
 
-        foreach($registro as $key => $value){
-            if(property_exists($objeto, $key)){
-                $objeto->$key =$value;
+        foreach ($registro as $key => $value) {
+            if (property_exists($objeto, $key)) {
+                $objeto->$key = $value;
             }
         }
         return $objeto;
     }
 
     // Sincronizar el objeto en memoria con los cambios realizados por el usuario
-    public function sincronizar($args = []){
-        foreach($args as $key => $value){
-            if(property_exists($this, $key) && !is_null($value)){
+    public function sincronizar($args = [])
+    {
+        foreach ($args as $key => $value) {
+            if (property_exists($this, $key) && !is_null($value)) {
                 $this->$key = $value;
             }
-
         }
     }
 }
